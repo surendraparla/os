@@ -1,52 +1,54 @@
 
 #include <iostream>
 #include <thread>
-#include <vector> 
+#include <vector>
 using namespace std;
 
- int BufferSize = 5;
- vector<int> Buffer(BufferSize,0);
-int mutex=1, empty = BufferSize, full = 0;
+#define BufferSize 5
+
+vector<int> Buffer(BufferSize,0);
+static int mutex=1, emp = BufferSize, full = 0;
 static int in = 0, out = 0;
-void wait(int *sem){
-    while(*sem <= 0);
-      *sem--;
+void wait(int &sem){
+    while(sem <= 0);
+        sem--;
 }
-void signal(int *sem){
-    *sem++;
+void signal(int &sem){
+    sem++;
+
 }
 void producer(){
     cout<< "running producer" <<endl;
     while(1){
-        wait(&empty);
-        wait(&mutex);
+        wait(emp);
+        wait(mutex);
         Buffer[in] = in+1;
         cout<<"item produced: "<< in+1 <<endl;
         in = (in+1)%BufferSize;
-        //Buffer[full] = full;
-        signal(&mutex);
-        signal(&full);
+     // cout<<empty<<"  "<<full<<"  "  ;
+        signal(mutex);
+        signal(full);
     }
 }
 void consumer(){
     cout<<"running consumer" <<endl;
+   // cout<<empty<<"  "<<full<<"  "  ;
     while(1){
-        wait(&full);
-        wait(&mutex);
+        wait(full);
+        wait(mutex);
         cout<<"item consumed: "<< Buffer[out] <<endl;
         out = (out + 1)%BufferSize;
         //Buffer[full] = full;
-        signal(&mutex);
-        signal(&empty);
+      //  cout<<empty<<"  "<<full<<"  "  ;
+        signal(mutex);
+        signal(emp);
     }
 }
 int main(){
-    int n;
-    cout<<"Enter the BufferSize"<<endl;
-    cin>>BufferSize;
+    cout<<"Starting main function"<<endl;
     thread con(consumer);
-    thread prod(producer);
-    con.join();
+     thread prod(producer);
     prod.join();
+      con.join();
     return 0;
 }
