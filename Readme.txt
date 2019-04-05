@@ -3,4 +3,4 @@ This project consists of three codes.
 2. Readers Writers problem using Semaphores.
 3. Dining Philosophers problem using Semaphores.
  
-Execution is done on C++ 14 
+Execution is done on C++ 14 Codeblocks IDE
